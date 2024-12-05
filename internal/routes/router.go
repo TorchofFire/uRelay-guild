@@ -23,10 +23,11 @@ func Init() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/", rootHandler)
-	router.HandleFunc("/channels", channels).Methods("GET")
-	router.HandleFunc("/users", users).Methods("GET")
-	router.HandleFunc("/profile/{id}", profile).Methods("GET")
-	router.HandleFunc("/text-channel/{id}", textChannel).Methods("GET")
+	router.HandleFunc("/guild-info", guildInfo).Methods("GET")
+	router.HandleFunc("/channels", channels).Methods("GET")             // TODO: add middleware to require online
+	router.HandleFunc("/users", users).Methods("GET")                   // TODO: add middleware to require online
+	router.HandleFunc("/profile/{id}", profile).Methods("GET")          // TODO: add middleware to require online
+	router.HandleFunc("/text-channel/{id}", textChannel).Methods("GET") // TODO: add middleware to require online
 	http.Handle("/", router)
 
 	if config.SecureProtocol {

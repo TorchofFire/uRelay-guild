@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func textChannel(writer http.ResponseWriter, request *http.Request) {
+func textChannel(writer http.ResponseWriter, request *http.Request) { // TODO: add perms to check if user can GET for this *specific* channel id
 	writer.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(request)
 	stringChannelId := vars["id"]
@@ -20,7 +20,7 @@ func textChannel(writer http.ResponseWriter, request *http.Request) {
 		http.Error(writer, "channel id must be a number", http.StatusBadRequest)
 		return
 	}
-	
+
 	var messages []models.GuildMessages
 	var messagesQuery strings.Builder
 	var queryArgs []interface{}
@@ -57,9 +57,9 @@ func textChannel(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if err := result.Err(); err != nil {
-        http.Error(writer, err.Error(), http.StatusInternalServerError)
-        return
-    }
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	if messages == nil {
 		messages = []models.GuildMessages{}
