@@ -6,6 +6,7 @@ import (
 
 	"github.com/TorchofFire/uRelay-guild/config"
 	"github.com/TorchofFire/uRelay-guild/internal/connections"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
@@ -19,10 +20,14 @@ func rootHandler(writer http.ResponseWriter, request *http.Request) {
 }
 
 func Init() {
-	http.HandleFunc("/", rootHandler)
-	http.HandleFunc("/channels", channels)
-	http.HandleFunc("/users", users)
-	http.HandleFunc("/profile/{id}", profile)
+	router := mux.NewRouter()
+
+	router.HandleFunc("/", rootHandler)
+	router.HandleFunc("/channels", channels).Methods("GET")
+	router.HandleFunc("/users", users).Methods("GET")
+	router.HandleFunc("/profile/{id}", profile).Methods("GET")
+	router.HandleFunc("/text-channel/{id}", textChannel).Methods("GET")
+	http.Handle("/", router)
 
 	if config.SecureProtocol {
 		if config.CertPath == "" {

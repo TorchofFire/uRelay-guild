@@ -8,13 +8,15 @@ import (
 
 	"github.com/TorchofFire/uRelay-guild/internal/guild"
 	"github.com/TorchofFire/uRelay-guild/internal/models"
+	"github.com/gorilla/mux"
 )
 
 func profile(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 
-	path := strings.TrimPrefix(request.URL.Path, "/profile/")
-	userIds := strings.Split(path, ",")
+	vars := mux.Vars(request)
+	stringIds := vars["id"]
+	userIds := strings.Split(stringIds, ",")
 	if len(userIds) > 15 {
 		userIds = userIds[:15]
 	}
@@ -35,11 +37,9 @@ func profile(writer http.ResponseWriter, request *http.Request) {
 		}
 	}
 
-	if len(profiles) == 0 {
-		http.NotFound(writer, request)
-		return
+	if profiles == nil {
+		profiles = []models.Users{}
 	}
-
 	if err := json.NewEncoder(writer).Encode(profiles); err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
