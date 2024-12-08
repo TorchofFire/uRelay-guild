@@ -67,11 +67,12 @@ func Handler(writer http.ResponseWriter, request *http.Request) {
 			sendSystemMessageViaConn(conn, types.Info, "Connected", 0)
 
 			firstPacketRecieved = true
-			return
+			continue
 		}
 
 		if userId == 0 {
-			log.Fatal("UserId should not be 0 when handshake has been completed without disconnection")
+			sendSystemMessageViaConn(conn, types.Danger, "Connection closed due to server error: User Id unknown", 0)
+			conn.Close()
 			return
 		}
 

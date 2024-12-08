@@ -42,7 +42,7 @@ func sendSystemMessageViaConn(conn *websocket.Conn, severity types.Severity, mes
 		log.Println("could not encode system packet into json:", err)
 	}
 	packet := packets.BasePacket{
-		Type: "system_message",
+		Type: types.SystemMessage,
 		Data: sysMessageJSON,
 	}
 	if err := conn.WriteJSON(packet); err != nil {
