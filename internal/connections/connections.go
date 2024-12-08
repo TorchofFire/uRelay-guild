@@ -19,10 +19,10 @@ func Handler(writer http.ResponseWriter, request *http.Request) {
 		log.Println("Failed to upgrade connection:", err)
 		return
 	}
-	defer conn.Close()
 
 	var userId int
 	defer func() {
+		defer conn.Close()
 		if userId != 0 {
 			removeConnection(userId)
 		}
@@ -55,7 +55,8 @@ func Handler(writer http.ResponseWriter, request *http.Request) {
 				return
 			}
 
-			userId, err := handshake(handshakePacket)
+			var err error
+			userId, err = handshake(handshakePacket)
 			if err != nil {
 				sendSystemMessageViaConn(conn, types.Danger, err.Error(), 0)
 				conn.Close()
