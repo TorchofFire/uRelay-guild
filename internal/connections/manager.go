@@ -12,6 +12,9 @@ var (
 	MapMu sync.Mutex
 )
 
+// Note that it is assumed that a user is verified if added to the connections map.
+// Since a user ID is provided to add a connection, then checks have already been ran.
+
 func addNewConnection(userId int, conn *websocket.Conn) {
 	MapMu.Lock()
 	Map[userId] = conn
