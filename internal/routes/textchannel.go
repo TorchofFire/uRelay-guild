@@ -49,7 +49,7 @@ func textChannel(writer http.ResponseWriter, request *http.Request) { // TODO: a
 
 	for result.Next() {
 		var message models.GuildMessages
-		if err := result.Scan(&message.ChannelID, &message.ID, &message.Message, &message.SenderID, &message.SentAt); err != nil {
+		if err := result.Scan(&message.ID, &message.SenderID, &message.Message, &message.ChannelID, &message.SentAt); err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 			return
 		}
