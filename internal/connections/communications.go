@@ -11,11 +11,6 @@ import (
 )
 
 func sendPacketToAll(packet packets.BasePacket) {
-	packetJSON, err := json.Marshal(packet)
-	if err != nil {
-		log.Println("Failed to marshal packet:", err)
-	}
-
 	MapMu.Lock()
 	defer MapMu.Unlock()
 
@@ -24,7 +19,7 @@ func sendPacketToAll(packet packets.BasePacket) {
 		waitGroup.Add(1)
 		go func(c *websocket.Conn) {
 			defer waitGroup.Done()
-			c.WriteMessage(websocket.TextMessage, packetJSON)
+			c.WriteJSON(packet)
 		}(conn)
 	}
 

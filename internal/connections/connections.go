@@ -87,10 +87,5 @@ func Handler(writer http.ResponseWriter, request *http.Request) {
 		default:
 			log.Fatal("A deserialized and known packet was not handled")
 		}
-
-		if err := conn.WriteMessage(messageType, packet); err != nil {
-			log.Println("Error sending message:", err)
-			return
-		}
 	}
 }
