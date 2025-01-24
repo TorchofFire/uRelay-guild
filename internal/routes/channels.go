@@ -3,13 +3,11 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/TorchofFire/uRelay-guild/internal/guild"
 )
 
-func channels(writer http.ResponseWriter, request *http.Request) {
+func (s *Service) channels(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(writer).Encode(guild.Channels); err != nil {
+	if err := json.NewEncoder(writer).Encode(s.guild.GetChannels()); err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}

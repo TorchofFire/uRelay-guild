@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/TorchofFire/uRelay-guild/internal/connections"
-	"github.com/TorchofFire/uRelay-guild/internal/guild"
 )
 
 type gInfo struct {
@@ -17,7 +16,7 @@ type gInfo struct {
 	OnlineUserCount int    `json:"online_user_count"`
 }
 
-func guildInfo(writer http.ResponseWriter, request *http.Request) {
+func (s *Service) guildInfo(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 
 	guildInfo := gInfo{
@@ -25,7 +24,7 @@ func guildInfo(writer http.ResponseWriter, request *http.Request) {
 		Version:         "",
 		Logo:            "",
 		Banner:          "",
-		UserCount:       len(guild.Users),
+		UserCount:       len(s.guild.GetUsers()),
 		OnlineUserCount: len(connections.Map),
 	}
 	if err := json.NewEncoder(writer).Encode(guildInfo); err != nil {
