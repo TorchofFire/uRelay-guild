@@ -3,8 +3,6 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/TorchofFire/uRelay-guild/internal/guild"
 )
 
 type userStripped struct {
@@ -13,10 +11,10 @@ type userStripped struct {
 	Name      string `json:"name"`
 }
 
-func users(writer http.ResponseWriter, request *http.Request) {
+func (s *Service) users(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	var users []userStripped
-	for _, user := range guild.Users {
+	for _, user := range s.guild.GetUsers() {
 		// TODO: if id exists in connections, set property online
 		users = append(users, userStripped{
 			ID:        user.ID,

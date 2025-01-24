@@ -6,28 +6,38 @@ import (
 
 	"github.com/TorchofFire/uRelay-guild/config"
 	"github.com/TorchofFire/uRelay-guild/internal/connections"
+	"github.com/TorchofFire/uRelay-guild/internal/guild"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
-func rootHandler(writer http.ResponseWriter, request *http.Request) {
+type Service struct {
+	guild       *guild.Service
+	connections *connections.Service
+}
+
+func NewService(guild *guild.Service, connections *connections.Service) *Service {
+	return &Service{guild: guild, connections: connections}
+}
+
+func (s *Service) rootHandler(writer http.ResponseWriter, request *http.Request) {
 	if websocket.IsWebSocketUpgrade(request) {
-		connections.Handler(writer, request)
+		s.connections.Handler(writer, request)
 		return
 	}
 	fs := http.FileServer(http.Dir("./public"))
 	http.StripPrefix("/", fs).ServeHTTP(writer, request)
 }
 
-func Init() {
+func (s *Service) Init() {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/", rootHandler)
-	router.HandleFunc("/guild-info", guildInfo).Methods("GET")
-	router.HandleFunc("/channels", channels).Methods("GET")             // TODO: add middleware to require online
-	router.HandleFunc("/users", users).Methods("GET")                   // TODO: add middleware to require online
-	router.HandleFunc("/profile/{id}", profile).Methods("GET")          // TODO: add middleware to require online
-	router.HandleFunc("/text-channel/{id}", textChannel).Methods("GET") // TODO: add middleware to require online
+	router.HandleFunc("/", s.rootHandler)
+	router.HandleFunc("/guild-info", s.guildInfo).Methods("GET")
+	router.HandleFunc("/channels", s.channels).Methods("GET")             // TODO: add middleware to require online
+	router.HandleFunc("/users", s.users).Methods("GET")                   // TODO: add middleware to require online
+	router.HandleFunc("/profile/{id}", s.profile).Methods("GET")          // TODO: add middleware to require online
+	router.HandleFunc("/text-channel/{id}", s.textChannel).Methods("GET") // TODO: add middleware to require online
 	http.Handle("/", router)
 
 	if config.SecureProtocol {

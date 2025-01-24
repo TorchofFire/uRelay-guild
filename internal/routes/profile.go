@@ -6,12 +6,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/TorchofFire/uRelay-guild/internal/guild"
 	"github.com/TorchofFire/uRelay-guild/internal/models"
 	"github.com/gorilla/mux"
 )
 
-func profile(writer http.ResponseWriter, request *http.Request) {
+func (s *Service) profile(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 
 	vars := mux.Vars(request)
@@ -31,7 +30,7 @@ func profile(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	var profiles []models.Users
-	for _, user := range guild.Users {
+	for _, user := range s.guild.GetUsers() {
 		if userIdMap[user.ID] {
 			profiles = append(profiles, user)
 		}

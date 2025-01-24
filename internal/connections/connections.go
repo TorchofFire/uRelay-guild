@@ -4,12 +4,22 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/TorchofFire/uRelay-guild/internal/guild"
 	"github.com/TorchofFire/uRelay-guild/internal/packets"
 	"github.com/TorchofFire/uRelay-guild/internal/types"
 	"github.com/gorilla/websocket"
 )
 
-func Handler(writer http.ResponseWriter, request *http.Request) {
+type Service struct {
+	guild *guild.Service
+}
+
+func NewService(guild *guild.Service) *Service {
+	s := &Service{guild: guild}
+	return s
+}
+
+func (s *Service) Handler(writer http.ResponseWriter, request *http.Request) {
 	conn, err := (&websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			return true
@@ -56,7 +66,7 @@ func Handler(writer http.ResponseWriter, request *http.Request) {
 			}
 
 			var err error
-			userId, err = handshake(handshakePacket)
+			userId, err = s.handshake(handshakePacket)
 			if err != nil {
 				sendSystemMessageViaConn(conn, types.Danger, err.Error(), 0)
 				conn.Close()
@@ -79,7 +89,7 @@ func Handler(writer http.ResponseWriter, request *http.Request) {
 
 		switch p := deserializedPacket.(type) {
 		case packets.GuildMessage:
-			handleGuildMessage(conn, p)
+			s.handleGuildMessage(conn, p)
 		case packets.Handshake:
 			sendSystemMessageViaConn(conn, types.Warning, "Did not expect a handshake packet", 0)
 		case packets.SystemMessage:
