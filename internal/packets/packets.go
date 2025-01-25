@@ -24,14 +24,14 @@ type Handshake struct { // type: handshake
 }
 
 type GuildMessage struct { // type: guild_message
-	ChannelId int    `json:"channel_id"`
-	SenderId  int    `json:"sender_id"`
+	ChannelId uint64 `json:"channel_id"`
+	SenderId  uint64 `json:"sender_id"`
 	Message   string `json:"message"`
-	Id        int    `json:"id"`
+	Id        uint64 `json:"id"`
 }
 
 type SystemMessage struct { // type: system_message
 	Severity  types.Severity `json:"severity"`
 	Message   string         `json:"message"`
-	ChannelId int            `json:"channel_id"`
+	ChannelId uint64         `json:"channel_id"`
 }

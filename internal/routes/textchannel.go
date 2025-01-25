@@ -30,6 +30,11 @@ func (s *Service) textChannel(writer http.ResponseWriter, request *http.Request)
 
 	messages, err := s.guild.GetGuildMessages(channelId, msgId)
 
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	if err := json.NewEncoder(writer).Encode(messages); err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
