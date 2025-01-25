@@ -26,7 +26,7 @@ func sendPacketToAll(packet packets.BasePacket) {
 	waitGroup.Wait()
 }
 
-func sendSystemMessageViaConn(conn *websocket.Conn, severity types.Severity, message string, channelId int) {
+func sendSystemMessageViaConn(conn *websocket.Conn, severity types.Severity, message string, channelId uint64) {
 	sysMessage := packets.SystemMessage{
 		Severity:  severity,
 		Message:   message,

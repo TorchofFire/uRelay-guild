@@ -30,7 +30,7 @@ func (s *Service) Handler(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	var userId int
+	var userId uint64
 	defer func() {
 		defer conn.Close()
 		if userId != 0 {

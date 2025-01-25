@@ -6,7 +6,7 @@ import (
 )
 
 type userStripped struct {
-	ID        int    `json:"id"`
+	ID        uint64 `json:"id"`
 	PublicKey string `json:"public_key"`
 	Name      string `json:"name"`
 }
@@ -21,6 +21,9 @@ func (s *Service) users(writer http.ResponseWriter, request *http.Request) {
 			PublicKey: user.PublicKey,
 			Name:      user.Name,
 		})
+	}
+	if len(users) == 0 {
+		users = []userStripped{}
 	}
 	if err := json.NewEncoder(writer).Encode(users); err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)

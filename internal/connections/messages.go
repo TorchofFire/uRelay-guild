@@ -12,7 +12,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (s *Service) handshake(packet packets.Handshake) (int, error) {
+func (s *Service) handshake(packet packets.Handshake) (uint64, error) {
 	serverId, err := unlockAndVerifySignedMessage(packet.PublicKey, packet.Proof, 30)
 	if err != nil {
 		return 0, err

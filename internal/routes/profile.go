@@ -20,9 +20,9 @@ func (s *Service) profile(writer http.ResponseWriter, request *http.Request) {
 		userIds = userIds[:15]
 	}
 
-	userIdMap := make(map[int]bool)
+	userIdMap := make(map[uint64]bool)
 	for _, id := range userIds {
-		var idInt int
+		var idInt uint64
 		_, err := fmt.Sscanf(id, "%d", &idInt)
 		if err == nil {
 			userIdMap[idInt] = true
