@@ -96,10 +96,10 @@ func (s *Service) GetGuildMessages(channelId, msgId int) ([]models.GuildMessages
 	queryArgs = append(queryArgs, channelId)
 
 	if msgId != 0 {
-		messagesQuery.WriteString(" AND id >= ?")
+		messagesQuery.WriteString(" AND id <= ?")
 		queryArgs = append(queryArgs, msgId)
 	}
-	messagesQuery.WriteString(" ORDER BY id ASC LIMIT 15")
+	messagesQuery.WriteString(" ORDER BY id DESC LIMIT 15")
 
 	result, err := s.db.Query(messagesQuery.String(), queryArgs...)
 	if err != nil {
