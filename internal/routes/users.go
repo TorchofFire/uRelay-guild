@@ -26,7 +26,7 @@ func (s *Service) users(writer http.ResponseWriter, request *http.Request) {
 	var users []userStripped
 	for _, user := range s.guild.GetUsers() {
 		userStatus := Offline
-		if _, err := s.guild.GetUser(user.ID); err == nil {
+		if s.connections.UserConnected(user.ID) {
 			userStatus = Online
 		}
 		users = append(users, userStripped{

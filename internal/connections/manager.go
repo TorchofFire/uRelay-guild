@@ -28,3 +28,10 @@ func removeConnection(userId uint64) {
 	MapMu.Unlock()
 	log.Printf("User %d disconnected", userId)
 }
+
+func (s *Service) UserConnected(userId uint64) bool {
+	MapMu.Lock()
+	defer MapMu.Unlock()
+	_, exists := Map[userId]
+	return exists
+}
