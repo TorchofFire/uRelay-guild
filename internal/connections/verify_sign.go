@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/nacl/sign"
 )
 
-func unlockAndVerifySignedMessage(publicKey, encryptedMessage string, timestampTolerance int) (string, error) {
+func (s *Service) unlockAndVerifySignedMessage(publicKey, encryptedMessage string, timestampTolerance int) (string, error) {
 	pubKey, err := base64.StdEncoding.DecodeString(publicKey)
 	if err != nil {
 		return "", fmt.Errorf("failed to decode publicKey: %w", err)

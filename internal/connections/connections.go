@@ -35,7 +35,7 @@ func (s *Service) Handler(writer http.ResponseWriter, request *http.Request) {
 	defer func() {
 		defer conn.Close()
 		if userId != 0 {
-			removeConnection(userId)
+			s.removeConnection(userId)
 		}
 	}()
 
@@ -55,7 +55,7 @@ func (s *Service) Handler(writer http.ResponseWriter, request *http.Request) {
 		deserializedPacket, err := s.packets.DeserializePacket(packet)
 		if err != nil {
 			log.Println(err)
-			sendSystemMessageViaConn(conn, types.Danger, "Unrecognized packet:", 0)
+			s.sendSystemMessageViaConn(conn, types.Danger, "Unrecognized packet:", 0)
 			return
 		}
 
@@ -69,21 +69,21 @@ func (s *Service) Handler(writer http.ResponseWriter, request *http.Request) {
 			var err error
 			userId, err = s.handshake(handshakePacket)
 			if err != nil {
-				sendSystemMessageViaConn(conn, types.Danger, err.Error(), 0)
+				s.sendSystemMessageViaConn(conn, types.Danger, err.Error(), 0)
 				conn.Close()
 				return
 			}
 
-			addNewConnection(userId, conn)
+			s.addNewConnection(userId, conn)
 
-			sendSystemMessageViaConn(conn, types.Info, "Connected", 0)
+			s.sendSystemMessageViaConn(conn, types.Info, "Connected", 0)
 
 			firstPacketRecieved = true
 			continue
 		}
 
 		if userId == 0 {
-			sendSystemMessageViaConn(conn, types.Danger, "Connection closed due to server error: User Id unknown", 0)
+			s.sendSystemMessageViaConn(conn, types.Danger, "Connection closed due to server error: User Id unknown", 0)
 			conn.Close()
 			return
 		}
@@ -92,9 +92,11 @@ func (s *Service) Handler(writer http.ResponseWriter, request *http.Request) {
 		case packets.GuildMessage:
 			s.handleGuildMessage(conn, p)
 		case packets.Handshake:
-			sendSystemMessageViaConn(conn, types.Warning, "Did not expect a handshake packet", 0)
+			s.sendSystemMessageViaConn(conn, types.Warning, "Did not expect a handshake packet", 0)
 		case packets.SystemMessage:
-			sendSystemMessageViaConn(conn, types.Warning, "Did not expect a system message packet", 0)
+			s.sendSystemMessageViaConn(conn, types.Warning, "Did not expect a system message packet", 0)
+		case packets.User:
+			s.sendSystemMessageViaConn(conn, types.Warning, "Did not expect a user packet", 0)
 		default:
 			log.Fatal("A deserialized and known packet was not handled")
 		}

@@ -13,7 +13,7 @@ import (
 )
 
 func (s *Service) handshake(packet packets.Handshake) (uint64, error) {
-	serverId, err := unlockAndVerifySignedMessage(packet.PublicKey, packet.Proof, 30)
+	serverId, err := s.unlockAndVerifySignedMessage(packet.PublicKey, packet.Proof, 30)
 	if err != nil {
 		return 0, err
 	}
@@ -39,19 +39,19 @@ func (s *Service) handleGuildMessage(conn *websocket.Conn, packet packets.GuildM
 		}
 	}
 	if channel == nil {
-		sendSystemMessageViaConn(conn, types.Danger, "Channel not found", packet.ChannelId)
+		s.sendSystemMessageViaConn(conn, types.Danger, "Channel not found", packet.ChannelId)
 		return
 	}
 
 	user, err := s.guild.GetUser(packet.SenderId)
 	if err != nil {
-		sendSystemMessageViaConn(conn, types.Danger, err.Error(), packet.ChannelId)
+		s.sendSystemMessageViaConn(conn, types.Danger, err.Error(), packet.ChannelId)
 		return
 	}
 
-	_, err = unlockAndVerifySignedMessage(user.PublicKey, packet.Message, 30)
+	_, err = s.unlockAndVerifySignedMessage(user.PublicKey, packet.Message, 30)
 	if err != nil {
-		sendSystemMessageViaConn(conn, types.Danger, "Your message didn't satisfy security requirements: "+err.Error(), packet.ChannelId)
+		s.sendSystemMessageViaConn(conn, types.Danger, "Your message didn't satisfy security requirements: "+err.Error(), packet.ChannelId)
 		return
 	}
 
@@ -72,5 +72,5 @@ func (s *Service) handleGuildMessage(conn *websocket.Conn, packet packets.GuildM
 		Data: packetJSON,
 	}
 
-	sendPacketToAll(basePacket)
+	s.sendPacketToAll(basePacket)
 }

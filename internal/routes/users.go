@@ -3,33 +3,20 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
-)
 
-type userStripped struct {
-	ID        uint64 `json:"id"`
-	PublicKey string `json:"public_key"`
-	Name      string `json:"name"`
-	Status    status `json:"status"`
-}
-
-type status string
-
-const (
-	Online status = "online"
-	// Idle    status = "idle"
-	// DnD     status = "dnd"
-	Offline status = "offline"
+	"github.com/TorchofFire/uRelay-guild/internal/packets"
+	"github.com/TorchofFire/uRelay-guild/internal/types"
 )
 
 func (s *Service) users(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	var users []userStripped
+	var users []packets.User
 	for _, user := range s.guild.GetUsers() {
-		userStatus := Offline
+		userStatus := types.Offline
 		if s.connections.UserConnected(user.ID) {
-			userStatus = Online
+			userStatus = types.Online
 		}
-		users = append(users, userStripped{
+		users = append(users, packets.User{
 			ID:        user.ID,
 			PublicKey: user.PublicKey,
 			Name:      user.Name,
@@ -37,7 +24,7 @@ func (s *Service) users(writer http.ResponseWriter, request *http.Request) {
 		})
 	}
 	if len(users) == 0 {
-		users = []userStripped{}
+		users = []packets.User{}
 	}
 	if err := json.NewEncoder(writer).Encode(users); err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)

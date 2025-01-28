@@ -15,14 +15,15 @@ var (
 // Note that it is assumed that a user is verified if added to the connections map.
 // Since a user ID is provided to add a connection, then checks have already been ran.
 
-func addNewConnection(userId uint64, conn *websocket.Conn) {
+func (s *Service) addNewConnection(userId uint64, conn *websocket.Conn) {
+	s.sendUserToAll(userId)
 	MapMu.Lock()
 	Map[userId] = conn
 	MapMu.Unlock()
 	log.Printf("User %d connected", userId)
 }
 
-func removeConnection(userId uint64) {
+func (s *Service) removeConnection(userId uint64) {
 	MapMu.Lock()
 	delete(Map, userId)
 	MapMu.Unlock()

@@ -35,6 +35,13 @@ func (s *Service) DeserializePacket(data []byte) (interface{}, error) {
 		}
 		return systemMessage, nil
 
+	case types.User:
+		var user User
+		if err := json.Unmarshal(base.Data, &user); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal user packet: %w", err)
+		}
+		return user, nil
+
 	default:
 		return nil, fmt.Errorf("unknown packet type: %v", base.Type)
 	}
