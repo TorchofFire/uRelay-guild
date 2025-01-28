@@ -6,6 +6,14 @@ import (
 	"github.com/TorchofFire/uRelay-guild/internal/types"
 )
 
+type Service struct {
+}
+
+func NewService() *Service {
+	s := &Service{}
+	return s
+}
+
 type BasePacket struct {
 	Type types.BasePacket `json:"type"`
 	Data json.RawMessage  `json:"data"`

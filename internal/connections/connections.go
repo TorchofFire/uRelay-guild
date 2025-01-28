@@ -11,11 +11,12 @@ import (
 )
 
 type Service struct {
-	guild *guild.Service
+	guild   *guild.Service
+	packets *packets.Service
 }
 
-func NewService(guild *guild.Service) *Service {
-	s := &Service{guild: guild}
+func NewService(guild *guild.Service, packets *packets.Service) *Service {
+	s := &Service{guild: guild, packets: packets}
 	return s
 }
 
@@ -51,7 +52,7 @@ func (s *Service) Handler(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		deserializedPacket, err := packets.DeserializePacket(packet)
+		deserializedPacket, err := s.packets.DeserializePacket(packet)
 		if err != nil {
 			log.Println(err)
 			sendSystemMessageViaConn(conn, types.Danger, "Unrecognized packet:", 0)

@@ -8,6 +8,7 @@ import (
 	"github.com/TorchofFire/uRelay-guild/internal/connections"
 	"github.com/TorchofFire/uRelay-guild/internal/database"
 	"github.com/TorchofFire/uRelay-guild/internal/guild"
+	"github.com/TorchofFire/uRelay-guild/internal/packets"
 	"github.com/TorchofFire/uRelay-guild/internal/routes"
 )
 
@@ -20,7 +21,8 @@ func main() {
 	}
 	defer db.Close()
 	guildService := guild.NewService(db)
-	connectionsService := connections.NewService(guildService)
+	packetsService := packets.NewService()
+	connectionsService := connections.NewService(guildService, packetsService)
 	routesService := routes.NewService(guildService, connectionsService)
 
 	routesService.Init()
