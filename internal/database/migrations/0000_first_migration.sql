@@ -25,7 +25,7 @@ DELIMITER ;
 CREATE TABLE `guild_categories` (
   `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(255) NOT NULL,
-  `display_priority` SMALLINT UNSIGNED NOT NULL
+  `display_priority` SMALLINT UNSIGNED NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `guild_channels` (
